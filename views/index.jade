@@ -3,3 +3,7 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  button(onclick="socket.emit('join', {roomName : 'Vi testar', user: {id: 'facebookid'}})") Testa
+
+  button(onclick="socket.send('Test', 'data')") Testa
