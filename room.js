@@ -8,7 +8,7 @@ exports.init = function(io){
       socket.join(data.roomName);
       socket.set('user', data.user, function() {
         
-        var room = rooms[data.roomName] || { roomName : data.roomName, users: [] };
+        var room = rooms[data.roomName] || { roomName : data.roomName, users: [], userSongs: {} };
         
         var existingUser = room.users.filter(function(existingUser) {
           return existingUser.id === data.user.id
@@ -18,18 +18,28 @@ exports.init = function(io){
         else {
           existingUser.lastJoinDate = new Date(); 
         }
-
+        
+        room.userSongs[data.user.id] = (room.userSongs[data.user.id] || [])
         rooms[data.roomName] = room;
         socket.set('roomName', data.roomName);
+
         socket.emit(room);
       });
 
     });
 
-    socket.on('addSong', function (data) {
-      //console.log(socket);
-      socket.get('roomName', function (data) {console.log(data)});
-      console.log(data);
+    socket.on('addSong', function (song) {
+      socket.get('roomName', function (err, roomName) {
+        var room = rooms[roomName];
+        if (!room) return;
+
+        socket.get('user', function(err, user) {
+          room.userSongs[user.id].push(song);            
+          console.log('userSongs', room.userSongs);
+        });
+        
+
+      });
 
     });
   });
