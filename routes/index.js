@@ -4,5 +4,6 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Expressen och bladet' });
+  var os = require("os");
+  res.render('index', { title: 'Wejay realtime server ' + os.hostname() });
 };
