@@ -4,7 +4,9 @@ block content
   h1= title
   p Welcome to #{title}
 
-  button(onclick="socket.emit('join', {roomName : 'Vi testar', user: {id: 'facebookid'}})") Join
+  button(onclick="socket.emit('join', {roomName : 'Vi testar', user: {id: 'Anahata'}})") Anahata Joins
+  button(onclick="socket.emit('join', {roomName : 'Vi testar', user: {id: 'Mahatma'}})") Mahatma Joins
 
-  button(onclick="socket.emit('addSong', {spotifyId : 1337, length: 33000})") AddSong
+  button(onclick="socket.emit('addSong', {spotifyId : 1337, length: 33000})") AddSong 1337
+  button(onclick="socket.emit('addSong', {spotifyId : 4711, length: 33000})") AddSong 4711
 
