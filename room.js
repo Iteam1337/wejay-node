@@ -5,7 +5,6 @@ exports.init = function(io){
   io.sockets.on('connection', function (socket) {
 
     socket.on('join', function (data) {
-      console.log(data.user.id + ' loggar in');
       socket.join(data.roomName);
       socket.set('user', data.user, function() {
         
@@ -21,12 +20,16 @@ exports.init = function(io){
         }
 
         rooms[data.roomName] = room;
+        socket.set('roomName', data.roomName);
         socket.emit(room);
-        console.log(data.user.id + ' loggade in i ' + data.roomName);
-      })
+      });
+
     });
 
-    socket.on('addSong', function (song) {
+    socket.on('addSong', function (data) {
+      //console.log(socket);
+      socket.get('roomName', function (data) {console.log(data)});
+      console.log(data);
 
     });
   });
