@@ -37,4 +37,4 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(server);
 
-require('./room').init(io);
+require('./hubs/room').init(io);
