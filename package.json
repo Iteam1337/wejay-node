@@ -9,6 +9,7 @@
     "express": "3.4.8",
     "jade": "*",
     "socket.io": "~0.9.16",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "marked": "~0.3.0"
   }
 }

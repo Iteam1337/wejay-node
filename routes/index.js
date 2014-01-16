@@ -5,5 +5,5 @@
 
 exports.index = function(req, res){
   var os = require("os");
-  res.render('index', { title: 'Wejay realtime server ' + os.hostname() });
+  res.render('index', { title: 'Wejay realtime server ' + os.hostname() , host : req.headers.host});
 };

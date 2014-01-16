@@ -6,8 +6,7 @@ function Room(roomName)
   this.users = [];
   this.userSongs = {};
   this.currentSong = null;
-  this.timeout = null;
-  this.onNext = [];
+  this.onNext = []; // todo: eventemitter
   this.history = [];
 
   var timeout = null;
