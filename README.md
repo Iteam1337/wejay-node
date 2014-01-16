@@ -23,8 +23,9 @@ When joining a room you will receive an updated room object containing the lates
     socket.emit('join', {roomName: 'foo', user: {id: facebookId, ... }}, function(room){
       scope.room = room;
 
-      if (room.currentSong)
-        player.play(room.currentSong.spotifyId + "#" + new Date(room.currentSong.position).totalMinutes);
+      if (room.currentSong){
+        song.player.play(room.currentSong);
+      }
 
     });
 
