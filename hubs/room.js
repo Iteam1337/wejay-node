@@ -3,8 +3,6 @@ var Room = require('../models/Room');
 
 exports.init = function(io){
   io.sockets.on('connection', function (socket) {
-        console.log('init');
-
     var createRoom = function(roomName){
       var room = new Room(roomName);
       room.onNext.push(function(song){
@@ -15,7 +13,6 @@ exports.init = function(io){
 
     socket.on('join', function (data) {
       socket.join(data.roomName);
-        console.log('join');
       socket.set('user', data.user, function() {
         
         var room = rooms[data.roomName] || createRoom(data.roomName);
@@ -25,6 +22,9 @@ exports.init = function(io){
         rooms[room.roomName] = room;
         socket.set('roomName', room.roomName);
         console.log('join', room.users);
+        if (room.currentSong) room.currentSong.position = new Date() - room.currentSong.started;
+
+        console.log('room', room);
         socket.emit(room);
         socket.broadcast.emit(data.roomName).emit('userJoined', room.users);
       });
@@ -36,8 +36,9 @@ exports.init = function(io){
         if (!room) return console.log('no room with name', roomName);
 
         socket.get('user', function(err, user) {
-          song.user = user;
           room.userSongs[user.id].push(song);
+          if (!room.currentSong) room.next(); // starts the room
+          console.log('queue', room.queue);
           socket.broadcast.to(roomName).emit('songAdded', room.queue);
         });
       });
