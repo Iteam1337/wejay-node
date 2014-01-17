@@ -44,6 +44,18 @@ Make sure you have first joined the room before calling this method so the serve
 When you add a song, all connected clients will receive a new queue (see below) and if no songs was previously playing you will receive a 
 nextSong event directly.
 
+## Skip the current song
+
+To skip the current playing song you must send the song id to prevent two users skipping the same song twice 
+
+```javascript
+    socket.emit('skip', {spotifyId: '1337'});
+```
+
+When you add a song, all connected clients will receive a new queue (see below) and if no songs was previously playing you will receive a 
+nextSong event directly.
+
+
 ## Receive updates
 
 Once you have joined a room you will start receiving updates when songs are added or removed from the queue:
