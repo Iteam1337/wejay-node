@@ -4,7 +4,8 @@ About
 Wejay is a music app for Spotify, this is the API documentation. Read more about Wejay here:
 http://wejay.org or here http://github.com/iteam1337/Wejay
 
-
+## Build status:
+![build status](https://drone.io/github.com/Iteam1337/wejay-node/status.png)
 
 Install and connect:
 ====================
