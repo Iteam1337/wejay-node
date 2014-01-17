@@ -105,6 +105,37 @@ describe('Room', function() {
         });
       });
 
+      it("should be possible to mix songs from two users",function(done){
+
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName: 'queue', user:{id:'alice'}}, function(){
+            client1.emit('addSong', {spotifyId:1});
+            client1.emit('addSong', {spotifyId:2});
+            client1.emit('addSong', {spotifyId:3});
+          });
+        });
+
+        var client2 = io.connect(host, options);
+        client2.once('connect', function(){
+          client2.emit('join', {roomName: 'queue', user:{id:'bob'}}, function(){
+            client2.emit('addSong', {spotifyId:4});
+            client2.emit('addSong', {spotifyId:5});
+            client2.emit('addSong', {spotifyId:6},function(){
+              client2.once('queue', function(queue){
+                queue.should.have.length(7);
+                queue[0].spotifyId.should.eql(1);
+                queue[1].spotifyId.should.eql(4);
+                queue[2].spotifyId.should.eql(2);
+                queue[3].spotifyId.should.eql(5);
+                done();
+              });
+              client2.emit('addSong', {spotifyId:7});
+            });
+          });
+        });
+      });
+
     });
 
     describe('#nextSong', function() {
@@ -120,22 +151,54 @@ describe('Room', function() {
             });
             client1.emit('addSong', {spotifyId : 1337});
           });
-        });        
+        });
       });
-      // body...
+
     });
 
 
-    xdescribe('#skip', function(){
+    describe('#skip', function(){
 
-      it("should be possible to skip current song",function(done){
+      it("should be possible to skip",function(done){
         var client1 = io.connect(host, options);
         client1.once('connect', function(){
+          client1.emit('join', {roomName : 'skip', user: {id:1337}}, function(room){
+            client1.emit('addSong', {spotifyId : 44}, function(){
+              client1.emit('skip', {spotifyId : 44}, function(response){
+                response.should.eql('Song skipped');
+                done();
+              });
+            });
+          });
+        });
+      });
 
-          client1.emit('skip', {songId : 1337}, function(response){
-            should.ok(response);
+      it("should send updates to all clients",function(done){
+
+        var client1 = io.connect(host, options);
+        client1.emit('join', {roomName : 'broadcast', user: {id:1337}});
+        client1.once('nextSong', function(song1){
+          song1.spotifyId.should.eql(1);
+          client1.once('nextSong', function(song2){
+            song2.spotifyId.should.eql(2);
             done();
           });
+        });
+
+        var client2 = io.connect(host, options);
+        client2.once('connect', function(){
+
+          client2.emit('join', {roomName : 'broadcast', user: {id:1337}});
+          client2.emit('addSong', {spotifyId : 1});
+          client2.emit('addSong', {spotifyId : 2}, function(){
+            client2.emit('skip', {spotifyId : 1}, function(response){
+              response.should.eql('Song skipped');
+            });
+          });
+          client2.emit('addSong', {spotifyId : 3});
+          client2.emit('addSong', {spotifyId : 5});
+          client2.emit('addSong', {spotifyId : 6});
+          client2.emit('addSong', {spotifyId : 7});
 
         });
       });

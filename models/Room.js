@@ -43,11 +43,10 @@ Room.prototype = {
   next : function() {
     var self = this;
 
-    console.log('next', this);
     this.stopTimer();
 
     if (this.currentSong) {
-      var song = this.userSongs[this.currentSong.user.id].unshift(); // remove it from the user's queue
+      var song = this.userSongs[this.currentSong.user.id].splice(0,1)[0]; // remove it from the user's queue
       song.ended = new Date();
       this.history.push(song);
     }

@@ -46,10 +46,10 @@ nextSong event directly.
 
 ## Receive updates
 
-Once you have joined a room you will start receiving updates when songs are added to the queue:
+Once you have joined a room you will start receiving updates when songs are added or removed from the queue:
 
 ```javascript
-    socket.on('songAdded', function(queue){
+    socket.on('queue', function(queue){
       scope.room.queue = queue;
     })
 ```

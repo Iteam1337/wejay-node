@@ -12,6 +12,8 @@ exports.init = function(io){
     };
 
     socket.on('join', function (data, respond) {
+      if (!data.user || !data.roomName) return respond && respond('Error: RoomName and User are required');
+
       socket.join(data.roomName);
       socket.set('user', data.user, function() {
         
@@ -21,7 +23,6 @@ exports.init = function(io){
         room.userSongs[data.user.id] = (room.userSongs[data.user.id] || []);
         rooms[room.roomName] = room;
         socket.set('roomName', room.roomName);
-        console.log('join', room.users);
         if (room.currentSong) room.currentSong.position = new Date() - room.currentSong.started;
         socket.broadcast.to(data.roomName).emit('userJoined', room.users);
         return respond && respond(room);
@@ -31,14 +32,30 @@ exports.init = function(io){
     socket.on('addSong', function (song, respond) {
       socket.get('roomName', function (err, roomName) {
         var room = rooms[roomName];
-        if (!room) return respond(new Error('no room with name' + roomName));
+        if (!room) return respond &&  respond('Error: No room with name' + roomName);
 
         socket.get('user', function(err, user) {
           room.userSongs[user.id].push(song);
           if (!room.currentSong) room.next(); // starts the room
-          console.log('queue', room.queue);
           io.sockets.in(roomName).emit('queue', room.queue);
         });
+
+        return respond && respond('Song added');
+      });
+    });
+
+
+    socket.on('skip', function (song, respond) {
+      socket.get('roomName', function (err, roomName) {
+        var room = rooms[roomName];
+        if (room.currentSong && room.currentSong.spotifyId === song.spotifyId)
+        {
+          room.next();
+          io.sockets.in(roomName).emit('queue', room.queue);
+          return respond && respond('Song skipped');
+        } else {
+          return respond && respond("Error: Not current song anymore");
+        }
       });
     });
 
