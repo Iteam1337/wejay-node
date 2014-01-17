@@ -94,7 +94,7 @@ describe('Room', function() {
         client1.once('connect', function(){
           client1.emit('join', {roomName : 'add', user: {id:1337}}, function(room){
             room.should.have.property('queue');
-            client1.once('songAdded',  function(queue){
+            client1.once('queue',  function(queue){
               queue.should.have.length(1);
               queue[0].spotifyId.should.eql(1337);
               client1.disconnect();
@@ -105,6 +105,24 @@ describe('Room', function() {
         });
       });
 
+    });
+
+    describe('#nextSong', function() {
+      it('room should start with first song', function(done) {
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName : 'next', user: {id:1337}}, function(room){
+            should.not.exist(room.currentSong);
+            client1.once('nextSong',  function(song){
+              song.spotifyId.should.eql(1337);
+              client1.disconnect();
+              done();
+            });
+            client1.emit('addSong', {spotifyId : 1337});
+          });
+        });        
+      });
+      // body...
     });
 
 
@@ -121,12 +139,6 @@ describe('Room', function() {
 
         });
       });
-
     });
-
-
-
-
-
   });
 });

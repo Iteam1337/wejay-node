@@ -37,7 +37,7 @@ exports.init = function(io){
           room.userSongs[user.id].push(song);
           if (!room.currentSong) room.next(); // starts the room
           console.log('queue', room.queue);
-          io.sockets.in(roomName).emit('songAdded', room.queue);
+          io.sockets.in(roomName).emit('queue', room.queue);
         });
       });
     });
