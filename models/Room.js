@@ -21,6 +21,21 @@ function Room(roomName)
     clearTimeout(timeout);
   };
 
+  Object.defineProperty(this, "queue", {
+    get: function() {
+      var songs = [];
+      var users = this.users.sort(function(a,b){ return b.lastPlayDate - a.lastPlayDate; });
+      var self = this;
+      users.map(function(user){
+        var userSongs = self.userSongs[user.id];
+        if (userSongs && userSongs.length) songs.push(userSongs.map(function(song){ song.user = user; return song; }));
+      });
+      return weave(songs) || [];
+    },
+    enumerable : true
+  });
+
+
   return this;
 }
 
@@ -65,18 +80,10 @@ Room.prototype = {
     else {
       existingUser.lastJoinDate = new Date();
     }
-  },
-
-  get queue () {
-    var songs = [];
-    var users = this.users.sort(function(a,b){ return b.lastPlayDate - a.lastPlayDate; });
-    var self = this;
-    users.map(function(user){
-      var userSongs = self.userSongs[user.id];
-      if (userSongs && userSongs.length) songs.push(userSongs.map(function(song){ song.user = user; return song; }));
-    });
-    return weave(songs);
   }
+
 };
+
+
 
 module.exports = Room;

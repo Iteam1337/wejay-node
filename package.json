@@ -10,7 +10,7 @@
     "jade": "*",
     "socket.io": "~0.9.16",
     "lodash": "~2.4.1",
-    "marked": "~0.3.0"
+    "supermarked": "*"
   },
   "devDependencies": {
     "mocha": "~1.17.0",

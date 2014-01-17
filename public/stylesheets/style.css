@@ -350,3 +350,11 @@ pre {
     background-color: transparent;
     border: none;
   }
+
+pre .string{
+  color: #9b9;
+}
+
+pre .keyword{
+  color: #009;
+}

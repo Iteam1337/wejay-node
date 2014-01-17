@@ -5,8 +5,6 @@ block content
 
   include:markdown ../README.md
 
-
-
   button(onclick="socket.emit('join', {roomName : 'foo', user: {id: 'Bob'}})") Bob
   button(onclick="socket.emit('join', {roomName : 'foo', user: {id: 'Alice'}})") Alice
 
