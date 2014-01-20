@@ -7,6 +7,7 @@ exports.init = function(io){
       var room = new Room(roomName);
       room.onNext.push(function(song){
         io.sockets.in(roomName).emit('nextSong', song);
+        io.sockets.in(roomName).emit('queue', room.queue);
       });
       return room;
     };
@@ -42,7 +43,6 @@ exports.init = function(io){
         socket.get('user', function(err, user) {
           room.userSongs[user.id].push(song);
           if (!room.currentSong) room.next(); // starts the room
-          io.sockets.in(roomName).emit('queue', room.queue);
         });
 
         return respond && respond('Song added');
