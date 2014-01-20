@@ -43,6 +43,7 @@ exports.init = function(io){
         socket.get('user', function(err, user) {
           room.userSongs[user.id].push(song);
           if (!room.currentSong) room.next(); // starts the room
+          io.sockets.in(roomName).emit('queue', room.queue);
         });
 
         return respond && respond('Song added');
