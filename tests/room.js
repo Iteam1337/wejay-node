@@ -136,6 +136,70 @@ describe('Room', function() {
         });
       });
 
+
+      it("should be select user first who hasn't played a song for a while",function(done){
+
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName: 'balance', user:{id:'alice', lastPlayDate : new Date()}}, function(){
+            client1.emit('addSong', {spotifyId:1});
+
+            var client2 = io.connect(host, options);
+            client2.once('connect', function(){
+              client2.emit('join', {roomName: 'balance', user:{id:'bob', lastPlayDate : new Date()-100}}, function(){
+                client2.once('queue', function(queue){
+                  queue.should.have.length(2);
+                  queue[0].spotifyId.should.eql(1);
+                  done();
+                });
+                client2.emit('addSong', {spotifyId:4});
+              });
+            });
+          });
+        });
+      });
+
+
+      it("should mix correctly when one user have added 7 songs and another one just 3",function(done){
+
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName: 'overweight', user:{id:'alice'}}, function(){
+            client1.emit('addSong', {spotifyId:1});
+            client1.emit('addSong', {spotifyId:2});
+            client1.emit('addSong', {spotifyId:3});
+            client1.emit('addSong', {spotifyId:4});
+            client1.emit('addSong', {spotifyId:5});
+            client1.emit('addSong', {spotifyId:6});
+            client1.emit('addSong', {spotifyId:7});
+
+            var client2 = io.connect(host, options);
+            client2.once('connect', function(){
+              client2.emit('join', {roomName: 'overweight', user:{id:'bob'}}, function(){
+                client2.emit('addSong', {spotifyId:11});
+                client2.emit('addSong', {spotifyId:12}, function(){
+                  client2.once('queue', function(queue){
+                    queue.should.have.length(10);
+                    queue[0].should.have.property('spotifyId', 1);
+                    queue[1].should.have.property('spotifyId', 11);
+                    queue[2].should.have.property('spotifyId', 2);
+                    queue[3].should.have.property('spotifyId', 12);
+                    queue[4].should.have.property('spotifyId', 3);
+                    queue[5].should.have.property('spotifyId', 13);
+                    queue[6].should.have.property('spotifyId', 4);
+                    queue[7].should.have.property('spotifyId', 5);
+                    queue[8].should.have.property('spotifyId', 6);
+                    done();
+                  });
+                });
+                client2.emit('addSong', {spotifyId:13});
+              });
+            });
+          });
+        });
+      });
+
+
     });
 
     describe('#nextSong', function() {

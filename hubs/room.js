@@ -36,7 +36,7 @@ exports.init = function(io){
         if (!room) return respond &&  respond('Error: No room with name' + roomName);
 
         if (room.queue.filter(function(existingSong){ return existingSong.spotifyId === song.spotifyId }).shift()){
-          return respond('Error: This song is already in the queue');
+          return respond && respond('Error: This song is already in the queue');
         }
 
 

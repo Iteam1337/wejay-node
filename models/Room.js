@@ -24,7 +24,7 @@ function Room(roomName)
   Object.defineProperty(this, "queue", {
     get: function() {
       var songs = [];
-      var users = this.users.sort(function(a,b){ return b.lastPlayDate - a.lastPlayDate; });
+      var users = this.users.sort(function(a,b){ return (a.lastPlayDate || 0) - (b.lastPlayDate || 0); });
       var self = this;
       users.map(function(user){
         var userSongs = self.userSongs[user.id];
@@ -47,6 +47,7 @@ Room.prototype = {
 
     if (this.currentSong) {
       var song = this.userSongs[this.currentSong.user.id].splice(0,1)[0]; // remove it from the user's queue
+      this.currentSong.user.lastPlayDate = new Date();
       song.ended = new Date();
       this.history.push(song);
     }
@@ -55,7 +56,6 @@ Room.prototype = {
     {
       this.currentSong = this.queue[0];
       this.currentSong.started = new Date();
-      this.currentSong.user.lastPlayDate = new Date();
       this.startTimer();
 
     } else {
