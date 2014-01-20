@@ -34,6 +34,11 @@ exports.init = function(io){
         var room = rooms[roomName];
         if (!room) return respond &&  respond('Error: No room with name' + roomName);
 
+        if (room.queue.filter(function(existingSong){ return existingSong.spotifyId === song.spotifyId }).shift()){
+          return respond('Error: This song is already in the queue');
+        }
+
+
         socket.get('user', function(err, user) {
           room.userSongs[user.id].push(song);
           if (!room.currentSong) room.next(); // starts the room
