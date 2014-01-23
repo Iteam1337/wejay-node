@@ -105,6 +105,24 @@ describe('Room', function() {
         });
       });
 
+
+      it("should be possible to add more than one song",function(done){
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName : 'addSongs', user: {id:1337}}, function(room){
+            room.should.have.property('queue');
+            client1.once('queue',  function(queue){
+              queue.should.have.length(2);
+              queue[0].spotifyId.should.eql(1337);
+              queue[1].spotifyId.should.eql(1338);
+              client1.disconnect();
+              done();
+            });
+            client1.emit('addSong', [{spotifyId : 1337}, {spotifyId : 1338}]);
+          });
+        });
+      });
+
       it("should be possible to mix songs from two users",function(done){
 
         var client1 = io.connect(host, options);

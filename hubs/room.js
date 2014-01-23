@@ -30,6 +30,9 @@ exports.init = function(io){
       });
     });
 
+    /**
+     * Add one or many songs to a room
+     */
     socket.on('addSong', function (song, respond) {
       socket.get('roomName', function (err, roomName) {
         var room = rooms[roomName];
@@ -41,7 +44,8 @@ exports.init = function(io){
 
 
         socket.get('user', function(err, user) {
-          room.userSongs[user.id].push(song);
+          var songs = song.length && song || [song];
+          songs.map(function(song){room.userSongs[user.id].push(song)});
           if (!room.currentSong) room.next(); // starts the room
           io.sockets.in(roomName).emit('queue', room.queue);
         });
@@ -49,7 +53,6 @@ exports.init = function(io){
         return respond && respond('Song added');
       });
     });
-
 
     socket.on('skip', function (song, respond) {
       socket.get('roomName', function (err, roomName) {
