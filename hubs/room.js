@@ -25,7 +25,7 @@ exports.init = function(io){
         rooms[room.roomName] = room;
         socket.set('roomName', room.roomName);
         if (room.currentSong) room.currentSong.position = new Date() - room.currentSong.started;
-        socket.broadcast.to(data.roomName).emit('userJoined', room.users);
+        io.sockets.in(data.roomName).emit('userJoined', room.users);
         return respond && respond(room);
       });
     });
