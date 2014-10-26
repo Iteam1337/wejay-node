@@ -105,7 +105,6 @@ describe('Room', function() {
         });
       });
 
-
       it("should be possible to add more than one song",function(done){
         var client1 = io.connect(host, options);
         client1.once('connect', function(){

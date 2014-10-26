@@ -42,9 +42,8 @@ exports.init = function(io){
           return respond && respond('Error: This song is already in the queue');
         }
 
-
         socket.get('user', function(err, user) {
-          var songs = song.length && song || [song];
+          var songs = song.map && song || [song];
           songs.map(function(song){room.userSongs[user.id].push(song)});
           if (!room.currentSong) room.next(); // starts the room
           io.sockets.in(roomName).emit('queue', room.queue);
