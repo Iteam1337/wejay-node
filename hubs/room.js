@@ -63,7 +63,13 @@ exports.init = function(io){
           io.sockets.in(roomName).emit('queue', room.queue);
           return respond && respond('Song skipped');
         } else {
-          return respond && respond("Error: Not current song anymore");
+          var oldLength = room.queue.length;
+          room.removeSong(song);
+          if (room.queue.length < oldLength){
+            io.sockets.in(roomName).emit('queue', room.queue);
+            return respond && respond((oldLength - room.queue.length) + ' songs removed from queue', oldLength - room.queue.length);
+          }
+          return respond && respond('Error: Not current song anymore');
         }
       });
     });

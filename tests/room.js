@@ -254,6 +254,22 @@ describe('Room', function() {
         });
       });
 
+      it("should be possible to skip songs in queue",function(done){
+        var client1 = io.connect(host, options);
+        client1.once('connect', function(){
+          client1.emit('join', {roomName : 'skip', user: {id:1339}}, function(){
+            client1.emit('addSong', [{spotifyId : 44, user: {id:1339}}, {spotifyId : 45, user: {id:1339}}, {spotifyId : 46, user: {id:1339}}], function(){
+              
+              client1.emit('skip', {spotifyId : 45, user : {id:1339}}, function(response){
+                response.should.eql('1 songs removed from queue');
+                done();
+              });
+
+            });
+          });
+        });
+      });
+
       it("should send updates to all clients",function(done){
 
         var client1 = io.connect(host, options);

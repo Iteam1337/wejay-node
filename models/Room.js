@@ -67,6 +67,12 @@ Room.prototype = {
     });
   },
 
+  removeSong: function(song){
+    this.userSongs[song.user.id] = (this.userSongs[song.user.id] || []).filter(function(existing){
+      return existing.spotifyId !== song.spotifyId;
+    });
+  },
+
   join : function(user){
     var existingUser = this.users.filter(function(existingUser) {
       return existingUser.id === user.id;
