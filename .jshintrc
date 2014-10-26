@@ -1,0 +1,23 @@
+{
+    "curly": false,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "boss": true,
+    "eqnull": true,
+    "browser": true,
+    "smarttabs": true,
+    "globals": {
+        "angular": true,
+        "console": true,
+        "$": true,
+        "_": true,
+        "io": true,
+        "moment": true,
+        "require": true
+    }
+}

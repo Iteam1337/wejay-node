@@ -22,6 +22,7 @@ exports.init = function(io){
 
         room.join(data.user);
         room.userSongs[data.user.id] = (room.userSongs[data.user.id] || []);
+        room.serverTime = new Date();
         rooms[room.roomName] = room;
         socket.set('roomName', room.roomName);
         if (room.currentSong) room.currentSong.position = new Date() - room.currentSong.started;
