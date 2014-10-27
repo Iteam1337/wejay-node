@@ -57,8 +57,8 @@ exports.init = function(io){
     socket.on('skip', function (song, respond) {
       socket.get('roomName', function (err, roomName) {
         var room = rooms[roomName];
-        if (!room) return respond && respond('Room not found, login again');
-        
+        if (!room) return respond && respond('Error: Room not found, login again');
+
         if (room.currentSong && room.currentSong.spotifyId === song.spotifyId)
         {
           room.next();
