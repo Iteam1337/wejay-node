@@ -3,6 +3,7 @@ process.env.PORT = port
 var host = 'http://127.0.0.1:' + port
 var should = require('should')
 var io = require('socket.io-client')
+require('../server.js')
 
 describe('Room', function () {
   describe('socket communication', function () {
