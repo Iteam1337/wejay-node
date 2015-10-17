@@ -3,7 +3,8 @@ extends layout
 block content
   h1= title
 
-  include:markdown ../README.md
+  p
+    a(href="http://github.com/Iteam1337/wejay-node") API Docs
 
   button(onclick="socket.emit('join', {roomName : 'foo', user: {id: 'Bob'}})") Bob
   button(onclick="socket.emit('join', {roomName : 'foo', user: {id: 'Alice'}})") Alice
