@@ -96,7 +96,6 @@ describe('Room', function () {
         var client1 = io.connect(host, options)
         client1.once('connect', function () {
           client1.emit('join', {roomName: 'add', user: {id: 1337}}, function (room) {
-            room.should.have.property('queue')
             client1.emit('addSong', {spotifyId: 1337})
             client1.emit('addSong', {spotifyId: 1337}, (err) => {
               err.should.eql('Error: This song is already in the queue')
@@ -111,8 +110,9 @@ describe('Room', function () {
         var client1 = io.connect(host, options)
         client1.once('connect', function () {
           client1.emit('join', {roomName: 'addSongs', user: {id: 1337}}, function (room) {
-            room.should.have.property('queue')
+            console.log('room', room)
             client1.once('queue', function (queue) {
+              console.log('queue', room)
               queue.should.have.length(2)
               queue[0].spotifyId.should.eql(1337)
               queue[1].spotifyId.should.eql(1338)

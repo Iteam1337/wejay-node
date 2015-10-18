@@ -43,7 +43,7 @@ exports.init = function (io) {
       var roomName = socket.roomName
       var room = rooms[roomName]
       if (!room) return respond && respond('Error: No room with name' + roomName)
-      if (!song.spotifyId) return respond && respond('SpotifyId is required')
+      if (!song.length && !song.spotifyId) return respond && respond('Error: SpotifyId is required')
 
       console.log('song added', song)
       if (room.queue.filter(function (existingSong) { return existingSong.spotifyId === song.spotifyId }).shift()) {
@@ -70,6 +70,7 @@ exports.init = function (io) {
         return respond && respond('Song skipped')
       } else {
         var oldLength = room.queue.length
+        console.log('skipping song in queue')
         room.removeSong(song)
         if (room.queue.length < oldLength) {
           io.sockets.in(roomName).emit('queue', room.queue)
