@@ -3,8 +3,9 @@ var Room = require('../models/Room')
 
 exports.init = function (io) {
   io.sockets.on('connection', function (socket) {
-    socket.emit('rooms', rooms.map(room => {
-      return { roomName: room.roomName, users: room.users.length, currentSong: room.currentSong }
+    socket.emit('rooms', Object.keys(rooms).map(roomName => {
+      let room = rooms[roomName]
+      return { roomName: roomName, users: room.users.length, currentSong: room.currentSong }
     }))
 
     var createRoom = function (roomName) {
