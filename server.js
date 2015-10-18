@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -11,6 +10,9 @@ var path = require('path')
 
 var http = require('http').Server(app)
 var io = require('socket.io')(http)
+
+var redis = require('socket.io-redis')
+io.adapter(redis({ host: process.env.redis_host || 'redis', port: process.env.redis_port || 6379 }))
 
 // all environments
 app.set('port', process.env.PORT || 80)

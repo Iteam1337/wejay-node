@@ -11,6 +11,7 @@
     "jade": "*",
     "lodash": "~2.4.1",
     "socket.io": "^1.3.7",
+    "socket.io-redis": "^0.1.4",
     "supermarked": "*"
   },
   "devDependencies": {
