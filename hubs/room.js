@@ -38,11 +38,12 @@ exports.init = function (io) {
       var roomName = socket.roomName
       var room = rooms[roomName]
       if (!room) return respond && respond('Error: No room with name' + roomName)
+      if (!song.spotifyId) return respond && respond('SpotifyId is required')
 
+      console.log('song added', song)
       if (room.queue.filter(function (existingSong) { return existingSong.spotifyId === song.spotifyId }).shift()) {
         return respond && respond('Error: This song is already in the queue')
       }
-      console.log('song added', song)
 
       var user = socket.user
       var songs = song.map && song || [song]

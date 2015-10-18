@@ -92,6 +92,21 @@ describe('Room', function () {
         })
       })
 
+      it('should be not be possible to add the same song twice', function (done) {
+        var client1 = io.connect(host, options)
+        client1.once('connect', function () {
+          client1.emit('join', {roomName: 'add', user: {id: 1337}}, function (room) {
+            room.should.have.property('queue')
+            client1.emit('addSong', {spotifyId: 1337})
+            client1.emit('addSong', {spotifyId: 1337}, (err) => {
+              err.should.eql('Error: This song is already in the queue')
+              client1.disconnect()
+              done()
+            })
+          })
+        })
+      })
+
       it('should be possible to add more than one song', function (done) {
         var client1 = io.connect(host, options)
         client1.once('connect', function () {
