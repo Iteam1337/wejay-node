@@ -75,6 +75,30 @@ describe('Room', function () {
       })
     })
 
+    describe('#disconnect', function () {
+      it('should notified other when a client disconnect from a room', function (done) {
+        var client1 = io.connect(host, options)
+        client1.once('connect', function () {
+          var client2 = io.connect(host, options)
+          client2.once('connect', function () {
+            client1.emit('join', {roomName: 'disconnect', user: {id: 1337}}, function () {
+              client1.once('userLeft', function (users) {
+                users.should.have.length(1)
+                users[0].id.should.eql(1337)
+                client1.disconnect()
+                done()
+              })
+            })
+
+            client2.emit('join', {roomName: 'disconnect', user: {id: 1337}}, function () {
+              client2.disconnect()
+            })
+
+          })
+        })
+      })
+    })
+
     describe('#addSong', function () {
       it('should be possible to add a song', function (done) {
         var client1 = io.connect(host, options)

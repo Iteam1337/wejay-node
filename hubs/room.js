@@ -36,6 +36,13 @@ exports.init = function (io) {
       return respond && respond(room)
     })
 
+    socket.on('disconnect', function () {
+      var room = rooms[socket.roomName]
+      delete room.users[socket.user]
+      io.sockets.in(socket.roomName).emit('userLeft', room.users)
+      console.log('user disconnect', room.users)
+    })
+
     /**
      * Add one or many songs to a room
      */
