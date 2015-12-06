@@ -121,7 +121,7 @@ describe('Room', function () {
         client1.once('connect', function () {
           client1.emit('join', {roomName: 'add', user: {id: 1337}}, function (room) {
             client1.emit('addSong', {spotifyId: 1337})
-            client1.emit('addSong', {spotifyId: 1337}, (err) => {
+            client1.emit('addSong', {spotifyId: 1337}, function (err) {
               err.should.eql('Error: This song is already in the queue')
               client1.disconnect()
               done()
