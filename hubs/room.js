@@ -38,6 +38,7 @@ exports.init = function (io) {
 
     socket.on('disconnect', function () {
       var room = rooms[socket.roomName]
+      if (!room) return
       delete room.users[socket.user]
       io.sockets.in(socket.roomName).emit('userLeft', room.users)
       console.log('user disconnect', room.users)
