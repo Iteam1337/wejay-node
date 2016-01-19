@@ -1,6 +1,6 @@
 var port = 3333
 process.env.PORT = port
-var host = 'http://127.0.0.1:' + port
+var host = 'http://localhost:' + port
 var should = require('should')
 var io = require('socket.io-client')
 require('../server.js')
