@@ -54,6 +54,7 @@ exports.init = function (io) {
       if (!song.length && !song.spotifyId) return respond && respond('Error: SpotifyId is required')
 
       song.started = song.ended = song.position = undefined
+      song.duration = song.duration || 10 * 60 * 1000
       console.log('song added', song)
       if (room.queue.filter(function (existingSong) { return existingSong.spotifyId === song.spotifyId }).shift()) {
         return respond && respond('Error: This song is already in the queue')
