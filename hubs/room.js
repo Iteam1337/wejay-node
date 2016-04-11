@@ -1,5 +1,6 @@
 var rooms = {}
 var Room = require('../models/Room')
+var moment = require('moment')
 
 exports.init = function (io) {
   io.sockets.on('connection', function (socket) {
@@ -24,16 +25,39 @@ exports.init = function (io) {
       socket.user = data.user
 
       var room = rooms[data.roomName] || createRoom(data.roomName)
-      console.log('user joined', data)
 
       room.join(data.user)
       room.userSongs[data.user.id] = (room.userSongs[data.user.id] || [])
       room.serverTime = new Date()
       rooms[room.roomName] = room
+      room.history = room.history
+        .sort((a, b) => (
+          moment(b.ended).format('X') - moment(a.ended).format('X')
+        ))
+        .slice(0, 50)
+
       socket.roomName = room.roomName
       if (room.currentSong) room.currentSong.position = new Date() - room.currentSong.started
       io.sockets.in(data.roomName).emit('userJoined', room.users)
       return respond && respond(room)
+    })
+
+    socket.on('history', (roomName, respond) => {
+      if (!rooms[roomName]) {
+        return respond && respond('Error: No room with that name')
+      }
+
+      if (!rooms[roomName].history.length) {
+        return respond && respond('Error: No history')
+      }
+
+      var history = rooms[roomName].history
+        .sort((a, b) => (
+          moment(b.ended).format('X') - moment(a.ended).format('X')
+        ))
+        .slice(0, 50)
+
+      return respond && respond(history)
     })
 
     socket.on('disconnect', function () {
@@ -41,7 +65,6 @@ exports.init = function (io) {
       if (!room) return
       delete room.users[socket.user]
       io.sockets.in(socket.roomName).emit('userLeft', room.users)
-      console.log('user disconnect', room.users)
     })
 
     /**

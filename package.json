@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
+    "dev": "export PORT=4000 && export redis_host=localhost && nodemon server.js",
     "test": "mocha tests/*"
   },
   "dependencies": {
