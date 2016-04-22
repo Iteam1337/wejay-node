@@ -7,6 +7,7 @@ function Room (roomName) {
   this.currentSong = null
   this.onNext = []; // todo: eventemitter
   this.history = []
+  this.chat = []
 
   var timeout = null
   this.startTimer = function () {
@@ -81,8 +82,13 @@ Room.prototype = {
     } else {
       existingUser.lastJoinDate = new Date()
     }
-  }
+  },
 
+  message: function (message) {
+    this.chat = this.chat.concat([message])
+
+    return this.chat
+  }
 }
 
 module.exports = Room

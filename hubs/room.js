@@ -113,5 +113,17 @@ exports.init = function (io) {
       }
     })
 
+
+    /**
+     * Chat
+     */
+    socket.on('chat', (message, respond) => {
+      const roomName = socket.roomName
+      const room = rooms[roomName]
+      const chat = room.message(message)
+
+      io.sockets.in(roomName).emit('chatMessage', chat)
+      return respond && respond('Chat message')
+    })
   })
 }
