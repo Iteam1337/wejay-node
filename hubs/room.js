@@ -32,7 +32,11 @@ exports.init = function (io) {
       socket.join(data.roomName)
       socket.user = data.user
 
-      var room = rooms[data.roomName] || createRoom(data.roomName)
+      var room = rooms[data.roomName]
+      if (!room) {
+        room = createRoom(data.roomName)
+        io.sockets.emit('roomCreated', room)
+      }
 
       room.join(data.user)
       room.userSongs[data.user.id] = (room.userSongs[data.user.id] || [])
