@@ -4,11 +4,6 @@ var moment = require('moment')
 
 exports.init = function (io) {
   io.sockets.on('connection', function (socket) {
-    socket.emit('rooms', Object.keys(rooms).map(roomName => {
-      var room = rooms[roomName]
-      return { roomName: roomName, users: room.users.length, currentSong: room.currentSong }
-    }))
-
     var createRoom = function (roomName) {
       var room = new Room(roomName)
       room.onNext.push(function (song) {
@@ -17,6 +12,19 @@ exports.init = function (io) {
       })
       return room
     }
+
+    socket.on('rooms', function (respond) {
+      var currentRooms = Object.keys(rooms).map(roomName => {
+        var room = rooms[roomName]
+        return {
+          roomName: roomName,
+          users: room.users.length,
+          currentSong: room.currentSong
+        }
+      })
+
+      return respond && respond(currentRooms)
+    })
 
     socket.on('join', function (data, respond) {
       if (!data.user || !data.roomName) return respond && respond('Error: RoomName and User are required')
@@ -78,7 +86,6 @@ exports.init = function (io) {
 
       song.started = song.ended = song.position = undefined
       song.duration = song.duration || 10 * 60 * 1000
-      console.log('song added', song)
       if (room.queue.filter(function (existingSong) { return existingSong.spotifyId === song.spotifyId }).shift()) {
         return respond && respond('Error: This song is already in the queue')
       }
@@ -113,17 +120,19 @@ exports.init = function (io) {
       }
     })
 
+    socket.on('removeSong', function (song) {
+      var roomName = socket.roomName
+      var room = rooms[roomName]
 
-    /**
-     * Chat
-     */
-    socket.on('chat', (message, respond) => {
-      const roomName = socket.roomName
-      const room = rooms[roomName]
-      const chat = room.message(message)
+      var newQueue = room.queue.filter(existing => existing.spotifyId !== song.spotifyId)
 
-      io.sockets.in(roomName).emit('chatMessage', chat)
-      return respond && respond('Chat message')
+      room.removeSong(song)
+      io.sockets.in(roomName).emit('queue', newQueue)
+    })
+
+    socket.on('removeRoom', function (roomName, respond) {
+      delete rooms[roomName]
+      return respond && respond(rooms)
     })
   })
 }
