@@ -1,6 +1,6 @@
 sut:
-  build: . 
-  command: sh -c "npm install && npm test"
+  build: .
+  command: sh -c "npm install"
   links:
     - redis
 redis:
