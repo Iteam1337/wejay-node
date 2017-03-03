@@ -26,6 +26,18 @@ exports.init = function (io) {
       return respond && respond(currentRooms)
     })
 
+    socket.on('pause', function (roomName) {
+      const room = rooms[roomName]
+      room.pause()
+      io.sockets.in(roomName).emit('pause')
+    })
+
+    socket.on('play', function (roomName) {
+      const room = rooms[roomName]
+      room.play()
+      io.sockets.in(roomName).emit('play')
+    })
+
     socket.on('join', function (data, respond) {
       if (!data.user || !data.roomName) return respond && respond('Error: RoomName and User are required')
 
@@ -33,12 +45,6 @@ exports.init = function (io) {
       socket.user = data.user
 
       var room = rooms[data.roomName] || createRoom(data.roomName)
-
-      // This be breaking
-      // if (!room) {
-      //   room = createRoom(data.roomName)
-      //   io.sockets.emit('roomCreated', room)
-      // }
 
       room.join(data.user)
       room.userSongs[data.user.id] = (room.userSongs[data.user.id] || [])
